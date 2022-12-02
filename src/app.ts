@@ -27,7 +27,7 @@ import {
             const session = await client.createSession();
             console.log("session created !");
 
-            const browsePath = makeBrowsePath("RootFolder", "/Objects/4:MFMS10-MC2/4:Components/4:Door/4:DoorState/2:ValueAsText");
+            const browsePath = makeBrowsePath("RootFolder", "/Objects/4:MFMS10-MC2/4:Components/4:Door/4:DoorState");
             const result = await session.translateBrowsePath(browsePath);
             const nodeId = result.targets[0].targetId;
 
@@ -42,6 +42,14 @@ import {
                 console.log( "   -> ", reference.toJSON());
             }
 
+            const maxAge = 0;
+            const nodeToRead = {
+                nodeId: nodeId,
+                attributeId: AttributeIds.Value
+            };
+            const dataValue = await session.read(nodeToRead, maxAge);
+
+            console.log("value", dataValue.toJSON());
             
 
             
@@ -82,6 +90,7 @@ import {
             monitoredItem.on("changed", (dataValue: DataValue) => {
                 console.log(" %s = %s", nodeId.toString(), dataValue.value.value);
             });
+
         }
         catch (err) {
             console.log("An error has occured : ", err);
